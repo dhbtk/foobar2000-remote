@@ -1,0 +1,112 @@
+{
+  "name": "foobar2000-remote",
+  "productName": "foobar2000-remote",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".webpack/main",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts ."
+  },
+  "keywords": [],
+  "author": {
+    "name": "Diana Horbatiuk",
+    "email": "diana@dianahorbatiuk.com"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "foobar2000_remote"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ],
+      "plugins": [
+        [
+          "@electron-forge/plugin-webpack",
+          {
+            "mainConfig": "./webpack.main.config.js",
+            "renderer": {
+              "config": "./webpack.renderer.config.js",
+              "entryPoints": [
+                {
+                  "html": "./src/index.html",
+                  "js": "./src/renderer.ts",
+                  "name": "main_window"
+                }
+              ]
+            }
+          }
+        ]
+      ]
+    }
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.57",
+    "@electron-forge/maker-deb": "^6.0.0-beta.57",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.57",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.57",
+    "@electron-forge/maker-zip": "^6.0.0-beta.57",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.57",
+    "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@types/react": "^17.0.13",
+    "@types/react-dom": "^17.0.8",
+    "@types/react-redux": "^7.1.16",
+    "@types/websql": "^0.0.27",
+    "@types/wicg-mediasession": "^1.1.1",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "css-loader": "^5.0.0",
+    "electron": "13.1.4",
+    "electron-devtools-installer": "^3.2.0",
+    "eslint": "^7.6.0",
+    "eslint-plugin-import": "^2.20.0",
+    "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^6.0.1",
+    "node-loader": "^2.0.0",
+    "style-loader": "^2.0.0",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.58",
+    "@reduxjs/toolkit": "^1.6.0",
+    "@types/node": "^16.6.1",
+    "date-fns": "^2.22.1",
+    "electron-media-service": "https://github.com/tidal-engineering/electron-media-service",
+    "electron-squirrel-startup": "^1.0.0",
+    "fast-xml-parser": "^3.19.0",
+    "he": "^1.2.0",
+    "node-ssdp": "^4.0.1",
+    "re-reselect": "^4.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.0",
+    "reselect": "^4.0.0",
+    "upnp-device-client": "^1.0.2"
+  }
+}
