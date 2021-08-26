@@ -15,6 +15,5 @@ export function setup (window: BrowserWindow): void {
 }
 
 ipcMain.on('media-metadata', (_, metadata) => {
-  console.log('setting metadata: ' + JSON.stringify(metadata))
   mediaService.setMetaData(metadata)
 })

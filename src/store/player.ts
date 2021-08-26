@@ -1,8 +1,6 @@
 import { createAsyncThunk, createReducer } from '@reduxjs/toolkit'
-import oldApi, { apiUrl, columns } from '../api/api'
-import { Player, PlayerState, PlaylistInfo, PlaylistItemList } from '../types'
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { fetchBaseQuery } from '@reduxjs/toolkit/query'
+import oldApi from '../api/api'
+import { PlayerState } from '../types'
 
 export const loadPlayerState = createAsyncThunk('loadPlayerState', async () => {
   return await oldApi.updateState()

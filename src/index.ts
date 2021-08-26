@@ -14,7 +14,6 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 
 ipcMain.handle('ssdp-search', (event, query) => new Promise((resolve) => {
   const ssdpClient = new SsdpClient()
-  console.log('starting search')
   ssdpClient.on('response', (data: { LOCATION: string }) => {
     resolve(data.LOCATION)
   })

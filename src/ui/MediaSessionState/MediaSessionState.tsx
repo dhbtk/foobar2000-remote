@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '../../store'
-import { getMediaImage, getMetadata, getNativeMetadata, getPlaybackState, getPlayerState } from '../../store/selectors'
+import { getMediaImage, getMetadata, getNativeMetadata, getPlayerState } from '../../store/selectors'
 import { shallowEqual } from 'react-redux'
 import { createStyles, makeStyles, Typography } from '@material-ui/core'
-import api from '../../api/api'
 import { setupRenderer, updateMetadata } from '../../stream/metadataRenderer'
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -36,7 +35,6 @@ const ms = (dur: number): string => {
 
 const MediaSessionState: React.FC = () => {
   const classes = useStyles()
-  const playbackState = useAppSelector(getPlaybackState, shallowEqual)
   const metadata = useAppSelector(getMetadata, shallowEqual)
   const nativeMetadata = useAppSelector(getNativeMetadata, shallowEqual)
   useEffect(() => {
@@ -47,37 +45,15 @@ const MediaSessionState: React.FC = () => {
   }, [nativeMetadata])
   useEffect(() => {
     if (metadata === null) {
-      //navigator.mediaSession.metadata = null
       window.document.title = 'foobar2000 remote'
     } else {
-      //navigator.mediaSession.metadata = new MediaMetadata(metadata)
       window.document.title = `${metadata.artist} - [${metadata.album}] | ${metadata.title} [foobar2000 remote]`
     }
   }, [metadata])
-  // useEffect(() => {
-  //   if (playbackState === 'stopped') {
-  //     navigator.mediaSession.playbackState = 'none'
-  //   } else if (playbackState === 'paused') {
-  //     navigator.mediaSession.playbackState = 'paused'
-  //   } else {
-  //     navigator.mediaSession.playbackState = 'playing'
-  //   }
-  //
-  // }, [playbackState])
-  // useEffect(() => {
-  //   navigator.mediaSession.setActionHandler('play', () => api.play())
-  //   navigator.mediaSession.setActionHandler('pause', () => api.pause())
-  //   navigator.mediaSession.setActionHandler('stop', () => api.stop())
-  //   navigator.mediaSession.setActionHandler('nexttrack', () => api.next())
-  //   navigator.mediaSession.setActionHandler('previoustrack', () => api.previous())
-  // }, [playbackState])
 
   const playerState = useAppSelector(getPlayerState, shallowEqual)
   const { duration, position } = playerState.activeItem
   const mediaImage = useAppSelector(getMediaImage, shallowEqual)
-  useEffect(() => {
-    // navigator.mediaSession.setPositionState({ duration, position, playbackRate: 1 })
-  }, [duration, position])
 
   if (metadata === null) {
     return <div className={classes.wrapper} />

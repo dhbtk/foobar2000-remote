@@ -16,7 +16,6 @@ async function findFoobar() {
 
   await upnpClient.setUrl(url)
   console.log(`found foobar at ${url}`)
-  // await bootstrap()
 }
 
 findFoobar().then(() => start())

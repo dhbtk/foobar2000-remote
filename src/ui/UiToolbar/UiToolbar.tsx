@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AppBar, IconButton, Slider, Toolbar, withStyles } from '@material-ui/core'
+import { AppBar, IconButton, Toolbar } from '@material-ui/core'
 import StopIcon from '@material-ui/icons/Stop'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import PauseIcon from '@material-ui/icons/Pause'

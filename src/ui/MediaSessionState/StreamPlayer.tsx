@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react'
 import { useAppSelector } from '../../store'
 import { getPlaybackState, getVolume } from '../../store/selectors'
 import { setGain, startListening } from '../../stream/player'
-import silenceFile from '../../silence.mp3'
 import { shallowEqual } from 'react-redux'
 import { streamUrl } from '../../api/api'
 
@@ -29,7 +28,6 @@ export default function StreamPlayer (): React.ReactElement {
   }, [useVbanStream])
 
   if (useVbanStream || !isListening) {
-    // return <audio src={silenceFile} loop />
     return <React.Fragment/>
   } else {
     return <audio ref={audioRef} autoPlay src={streamUrl} />

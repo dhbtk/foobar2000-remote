@@ -22,6 +22,5 @@ export function setupRenderer (): void {
 }
 
 export function updateMetadata (metadata: Metadata): void {
-  console.log('sending metadata: ' + JSON.stringify(metadata))
   ipcRenderer.send('media-metadata', metadata)
 }
