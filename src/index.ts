@@ -12,6 +12,14 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit()
 }
 
+app.name = 'foobar2000-remote'
+app.setAboutPanelOptions({
+  applicationName: 'foobar2000-remote',
+  applicationVersion: process.env.npm_package_version,
+  copyright: '(c) 2021 @dhbtk',
+  version: '69420'
+})
+
 ipcMain.handle('ssdp-search', (event, query) => new Promise((resolve) => {
   const ssdpClient = new SsdpClient()
   ssdpClient.on('response', (data: { LOCATION: string }) => {

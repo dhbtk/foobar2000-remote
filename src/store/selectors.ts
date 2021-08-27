@@ -68,7 +68,7 @@ export const getNativeMetadata = createSelector(
       title,
       artist,
       album,
-      albumArt: src,
+      artPath: src,
       state: playbackState,
       id: songId,
       currentTime: position,

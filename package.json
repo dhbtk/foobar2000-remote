@@ -19,7 +19,9 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "./icon/icon"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -95,11 +97,13 @@
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@reduxjs/toolkit": "^1.6.0",
     "@types/node": "^16.6.1",
+    "@types/node-fetch": "^2.5.12",
     "date-fns": "^2.22.1",
-    "electron-media-service": "https://github.com/tidal-engineering/electron-media-service",
+    "electron-media-service": "file:/Users/diana.horbatiuk/Projetos/electron-media-service",
     "electron-squirrel-startup": "^1.0.0",
     "fast-xml-parser": "^3.19.0",
     "he": "^1.2.0",
+    "node-fetch": "^2.6.1",
     "node-ssdp": "^4.0.1",
     "re-reselect": "^4.0.0",
     "react": "^17.0.2",
@@ -107,6 +111,7 @@
     "react-redux": "^7.2.4",
     "redux": "^4.1.0",
     "reselect": "^4.0.0",
+    "temp-dir": "^2.0.0",
     "upnp-device-client": "^1.0.2"
   }
 }

@@ -25,11 +25,11 @@ declare module 'electron-media-service' {
     title: string
     artist: string
     album: string
-    albumArt: string
     state: string,
     id: number,
     currentTime: number
     duration: number
+    artPath: string
   }
   declare class MediaService {
     startService (): void
