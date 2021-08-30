@@ -6,9 +6,11 @@ export const contentDirectoryUrl = 'http://192.168.18.3:56923/DeviceDescription.
 export const avTransportUrl = 'http://192.168.18.3:1046/'
 export const columns = [
   '%artist%', '%title%', '%album%', '%album artist%', '%date%', '%genre%', '%tracknumber%', '%totaltracks%',
-  '%discnumber%', '%totaldiscs%', '%codec%', '%length%', '%bitrate%', '%filesize_natural%', '%last_modified%']
+  '%discnumber%', '%totaldiscs%', '%codec%', '%length%', '%bitrate%', '%filesize_natural%', '%last_modified%',
+  '%channels%', '%filesize%', '%length_ex%', '%length_samples%', '%samplerate%', '%filename_ext%', '%path%',
+  '%subsong%', '%comment%' ]
 
-type FileColumns = {
+export type FileColumns = {
   artist: string
   title: string
   album: string
@@ -24,6 +26,15 @@ type FileColumns = {
   bitrate: string
   filesize: string
   lastModified: string
+  channels: string
+  rawFilesize: string
+  exactLength: string
+  sampleLength: string
+  sampleRate: string
+  filename: string
+  path: string
+  subsong: string
+  comment: string
 }
 
 export const columnInfo: (c: string[]) => FileColumns = c => ({
@@ -41,7 +52,16 @@ export const columnInfo: (c: string[]) => FileColumns = c => ({
   length: c[11],
   bitrate: c[12],
   filesize: c[13],
-  lastModified: c[14]
+  lastModified: c[14],
+  channels: c[15],
+  rawFilesize: c[16],
+  exactLength: c[17],
+  sampleLength: c[18],
+  sampleRate: c[19],
+  filename: c[20],
+  path: c[21],
+  subsong: c[22],
+  comment: c[23]
 })
 
 export type Entry = {

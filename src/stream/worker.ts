@@ -71,6 +71,10 @@ export function startListening (): void {
   isFirstChunk = true
   fetch('http://192.168.18.3:56923/content/psc.wav', { headers: { Authorization: 'Basic ' + btoa('foo:bar')}})
     .then(response => readStream(response.body.getReader()))
+    .catch(e => {
+      console.error(e)
+      setTimeout(() => startListening(), 1000)
+    })
 }
 
 self.onmessage = () => {

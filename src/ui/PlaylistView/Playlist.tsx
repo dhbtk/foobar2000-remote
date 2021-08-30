@@ -21,9 +21,21 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       color: '#f6f5fc'
     }
   },
+  '@media (prefers-color-scheme: light)': {
+    root: {
+      background: '#f6f5fc'
+    },
+    playlistRow: {
+      '&:nth-of-type(2n)': {
+        background: '#f1f0fc'
+      }
+    },
+    albumTitle: {
+      color: '#7f76e3'
+    }
+  },
   root: {
     paddingTop: theme.spacing(1),
-    background: '#f6f5fc',
     overflow: 'auto',
     height: '100%',
     width: '100%',
@@ -35,13 +47,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
     paddingBottom: theme.spacing(0.5),
     alignItems: 'center',
-    cursor: 'default',
-    '&:nth-of-type(2n)': {
-      background: '#f1f0fc'
-    }
+    cursor: 'default'
   },
   albumTitle: {
-    color: '#7f76e3',
     marginLeft: theme.spacing(1.5)
   },
   fixedWidth: {

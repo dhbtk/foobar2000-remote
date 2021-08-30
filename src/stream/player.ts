@@ -5,7 +5,7 @@ const gain = context.createGain()
 gain.gain.value = 0.05
 gain.connect(context.destination)
 
-const soundBuffer = new SoundBuffer(context, gain,44100, 10, false)
+const soundBuffer = new SoundBuffer(context, gain,44100, 3, false)
 
 function playChunk (leftBuffer: Float32Array, rightBuffer: Float32Array) {
   soundBuffer.addChunk(leftBuffer, rightBuffer)

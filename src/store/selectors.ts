@@ -1,7 +1,7 @@
 import { RootState } from './index'
 import { ActiveItem, PlaybackState, Player, PlaylistInfo } from '../types'
 import { createSelector } from 'reselect'
-import { apiUrl } from '../api/api'
+import { apiUrl, columnInfo } from '../api/api'
 
 export const getPlaybackState = (state: RootState): PlaybackState => state.player.player.playbackState
 export const getPlayerState = (state: RootState): Player => state.player.player
@@ -25,9 +25,10 @@ export const getMetadata = createSelector(
     (state) => state.player.player.activeItem.columns[1],
     (state) => state.player.player.activeItem.columns[0],
     (state) => state.player.player.activeItem.columns[2],
-    getMediaImage
+    getMediaImage,
+    (state) => columnInfo(state.player.player.activeItem.columns)
   ],
-  (playbackState, title, artist, album, src) => {
+  (playbackState, title, artist, album, src, itemInfo) => {
     if (playbackState === 'stopped') {
       return null
     } else {
@@ -35,7 +36,8 @@ export const getMetadata = createSelector(
         title,
         artist,
         album,
-        artwork: [{ src }]
+        artwork: [{ src }],
+        itemInfo
       }
     }
   }
