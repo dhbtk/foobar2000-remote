@@ -1,5 +1,5 @@
 import { IpcMain } from 'electron'
-import { Messages } from './types'
+import { Messages } from '../../shared/upnp/types'
 import Client, { Callback } from 'upnp-device-client'
 
 let client: Client

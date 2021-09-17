@@ -1,4 +1,4 @@
-import { BrowseItem } from '../../upnp/renderer'
+import { BrowseItem } from '../upnp/client'
 
 type Migration = (db: Database) => Promise<void>
 

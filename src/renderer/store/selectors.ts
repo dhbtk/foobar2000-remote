@@ -1,5 +1,5 @@
 import { RootState } from './index'
-import { ActiveItem, PlaybackState, Player, PlaylistInfo } from '../types'
+import { ActiveItem, PlaybackState, Player, PlaylistInfo } from '../../shared/types'
 import { createSelector } from 'reselect'
 import { apiUrl, columnInfo } from '../api/api'
 
@@ -67,9 +67,9 @@ export const getNativeMetadata = createSelector(
   ],
   (playbackState, title, artist, album, src, songId, position, duration) => {
     return {
-      title,
-      artist,
-      album,
+      title: title || '',
+      artist: artist || '',
+      album: album || '',
       artPath: src,
       state: playbackState,
       id: songId,

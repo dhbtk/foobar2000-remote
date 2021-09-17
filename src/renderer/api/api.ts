@@ -1,4 +1,4 @@
-import { QueryResponse } from '../types'
+import { QueryResponse } from '../../shared/types'
 
 export const streamUrl = 'http://foo:bar@192.168.18.3:56923/content/psc.mp3'
 export const apiUrl = 'http://desktop-ikn2fef.local:8880/api'

@@ -13,7 +13,13 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "jsx": "react"
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "webworker"
+    ]
   },
   "include": [
     "src/**/*"

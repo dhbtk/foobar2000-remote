@@ -1,6 +1,11 @@
+declare const self: DedicatedWorkerGlobalScope
+export {}
+
 const playbackBufferLength = 40960
 let rollingBuffer: Buffer[] = []
 let isFirstChunk = true
+let abortController: AbortController
+let abortSignal: AbortSignal
 
 function int16ToFloat32(inputArray: Int16Array, startIndex: number, length: number): Float32Array {
   const output = new Float32Array(inputArray.length - startIndex)
@@ -53,9 +58,7 @@ function decodeAllBuffers () {
   const float32Data = int16ToFloat32(sampleData, 0, sampleData.length)
   const leftData = new Float32Array(float32Data.filter((_, i) => i % 2 === 0))
   const rightData = new Float32Array(float32Data.filter((_, i) => i % 2 !== 0))
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  postMessage([leftData, rightData])
+  self.postMessage([leftData, rightData])
 }
 
 function readStream (reader: ReadableStreamDefaultReader<Uint8Array>) {
@@ -67,16 +70,35 @@ function readStream (reader: ReadableStreamDefaultReader<Uint8Array>) {
   })
 }
 
-export function startListening (): void {
+function startListening () {
+  abortController = new AbortController()
+  abortSignal = abortController.signal
   isFirstChunk = true
-  fetch('http://192.168.18.3:56923/content/psc.wav', { headers: { Authorization: 'Basic ' + btoa('foo:bar')}})
-    .then(response => readStream(response.body.getReader()))
-    .catch(e => {
-      console.error(e)
-      setTimeout(() => startListening(), 1000)
-    })
+  fetch(
+    'http://192.168.18.3:56923/content/psc.wav',
+    {
+      headers: {
+        Authorization: 'Basic ' + btoa('foo:bar')
+      },
+      signal: abortSignal
+    }
+  ).then(r => readStream(r.body.getReader())).catch(e => {
+    console.error(e)
+    setTimeout(() => startListening(), 1000)
+  })
 }
 
-self.onmessage = () => {
-  startListening()
+function stopListening () {
+  abortController.abort()
+}
+
+self.onmessage = ({ data }: MessageEvent<string>) => {
+  switch (data) {
+    case 'start':
+      startListening()
+      break
+    case 'stop':
+      stopListening()
+      break
+  }
 }

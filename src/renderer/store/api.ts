@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/dist/query/react'
 import { fetchBaseQuery } from '@reduxjs/toolkit/dist/query'
 import { apiUrl, columns } from '../api/api'
-import { Player, PlaylistInfo, PlaylistItemList } from '../types'
+import { Player, PlaylistInfo, PlaylistItemList } from '../../shared/types'
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: apiUrl }),

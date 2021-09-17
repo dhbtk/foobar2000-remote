@@ -3,7 +3,7 @@ import { useAppSelector } from '../../store'
 import { getMediaImage, getMetadata, getNativeMetadata, getPlayerState } from '../../store/selectors'
 import { shallowEqual } from 'react-redux'
 import { createStyles, makeStyles, Typography } from '@material-ui/core'
-import { setupRenderer, updateMetadata } from '../../stream/metadataRenderer'
+import { setupRenderer, updateMetadata } from '../../stream/metadataClient'
 import { ms } from '../utils'
 import { FileColumns } from '../../api/api'
 

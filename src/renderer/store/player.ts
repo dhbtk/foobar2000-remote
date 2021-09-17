@@ -1,6 +1,6 @@
 import { createAsyncThunk, createReducer } from '@reduxjs/toolkit'
 import oldApi from '../api/api'
-import { PlayerState } from '../types'
+import { PlayerState } from '../../shared/types'
 
 export const loadPlayerState = createAsyncThunk('loadPlayerState', async () => {
   return await oldApi.updateState()

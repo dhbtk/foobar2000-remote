@@ -1,5 +1,5 @@
-import upnpClient from '../upnp/renderer'
-import { getDatabase } from './library/DatabaseWrapper'
+import upnpClient from '../upnp/client'
+import { getDatabase } from './DatabaseWrapper'
 
 export async function rescan (progressCb: (progress: number, total: number) => void): Promise<void> {
   const mediaLibraryId = await upnpClient.browse().then(xml => xml.container.find(c => c.title === 'Media Library').id)

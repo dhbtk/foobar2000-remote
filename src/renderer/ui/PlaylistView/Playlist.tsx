@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core'
 import { useAppSelector } from '../../store'
 import { getActiveItem, getPlaylist } from '../../store/selectors'
 import { useGetPlaylistItemsQuery } from '../../store/api'
-import { PlaylistItemList } from '../../types'
+import { PlaylistItemList } from '../../../shared/types'
 import api, { columnInfo } from '../../api/api'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 

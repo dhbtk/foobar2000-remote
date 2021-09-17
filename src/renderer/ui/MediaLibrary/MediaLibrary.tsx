@@ -11,8 +11,8 @@ import {
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { TreeItem, TreeView } from '@material-ui/lab'
-import { rescan } from '../../app/libraryScanner'
-import { Album, getDatabase } from '../../app/library/DatabaseWrapper'
+import { rescan } from '../../library/libraryScanner'
+import { Album, getDatabase } from '../../library/DatabaseWrapper'
 
 const useStyles = makeStyles((theme) => createStyles({
   root: {

@@ -1,11 +1,11 @@
 import { IpcRenderer } from 'electron'
-import { Messages } from './types'
-import { Result } from './main'
+import { Messages } from '../../shared/upnp/types'
+import { Result } from '../../main/upnp/service'
 import { parse } from 'fast-xml-parser'
 
 let ipcRenderer: IpcRenderer
 
-export function setIpcRenderer (ipc: IpcRenderer): void {
+export function init (ipc: IpcRenderer): void {
   ipcRenderer = ipc
 }
 
@@ -90,7 +90,7 @@ function containerItems (container: any): Array<{
   }
 }
 
-const upnpRenderer = {
+const upnpClient = {
   setUrl: async (url: string): Promise<void> => {
     await ipcRenderer.invoke(Messages.NewClient, url)
   },
@@ -116,10 +116,10 @@ const upnpRenderer = {
       RequestedCount: '0',
       SortCriteria: ''
     }
-    const { result: { Result: result } } = await upnpRenderer.callAction('ContentDirectory', 'Browse', parameters)
+    const { result: { Result: result } } = await upnpClient.callAction('ContentDirectory', 'Browse', parameters)
 
     return browseXml(parse(result, { attrNodeName: 'attr', ignoreAttributes: false }))
   }
 }
 
-export default upnpRenderer
+export default upnpClient

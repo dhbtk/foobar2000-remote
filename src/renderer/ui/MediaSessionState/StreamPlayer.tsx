@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 import { useAppSelector } from '../../store'
 import { getPlaybackState, getVolume } from '../../store/selectors'
-import { setGain, startListening } from '../../stream/player'
+import { setGain, startListening, stopListening } from '../../stream/player'
 import { shallowEqual } from 'react-redux'
 import { streamUrl } from '../../api/api'
 
-const useVbanStream = true
+const useAudioContextStream = true
 
 export default function StreamPlayer (): React.ReactElement {
   const volume = useAppSelector(getVolume)
@@ -13,7 +13,7 @@ export default function StreamPlayer (): React.ReactElement {
   const playbackState = useAppSelector(getPlaybackState, shallowEqual)
   const isListening = playbackState === 'playing'
   useEffect(() => {
-    if (useVbanStream) {
+    if (useAudioContextStream) {
       setGain(volume / 100)
     } else {
       if (audioRef.current) {
@@ -22,12 +22,18 @@ export default function StreamPlayer (): React.ReactElement {
     }
   }, [volume])
   useEffect(() => {
-    if (useVbanStream) {
-      startListening()
+    if (useAudioContextStream) {
+      if (isListening) {
+        startListening()
+      } else {
+        stopListening()
+      }
+    } else {
+      stopListening()
     }
-  }, [useVbanStream])
+  }, [useAudioContextStream, isListening])
 
-  if (useVbanStream || !isListening) {
+  if (useAudioContextStream || !isListening) {
     return <React.Fragment/>
   } else {
     return <audio ref={audioRef} autoPlay src={streamUrl} />

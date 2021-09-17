@@ -1,11 +1,11 @@
-import './index.css'
+import '../index.css'
 import { start } from './ui/App'
-import upnpClient, { setIpcRenderer } from './upnp/renderer'
+import upnpClient, { init } from './upnp/client'
 import api from './api/api'
 
 async function findFoobar() {
   const ipcRenderer = window.require('electron').ipcRenderer
-  setIpcRenderer(ipcRenderer)
+  init(ipcRenderer)
   const url = await ipcRenderer.invoke('ssdp-search', 'urn:schemas-upnp-org:service:ContentDirectory:1')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
