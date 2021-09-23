@@ -5,17 +5,26 @@ import * as fs from 'fs'
 import * as path from 'path'
 import tempDir from 'temp-dir'
 
-const eventTypes = ['play', 'pause', 'playPause', 'next', 'previous', 'seek']
+export const eventTypes = ['play', 'pause', 'playPause', 'next', 'previous', 'seek'] as const
+type MediaEvent = typeof eventTypes[number]
+
 const mediaService = new MediaService()
-console.log('starting service')
 mediaService.startService()
 
-export function setup (window: BrowserWindow): void {
-  eventTypes.forEach(type => {
-    mediaService.on(type, (to) => {
-      window.webContents.send('media-event',type, to)
-    })
+let currentWindow: BrowserWindow | undefined = undefined
+
+eventTypes.forEach(type => {
+  mediaService.on(type, (to) => {
+    currentWindow?.webContents?.send('media-event',type, to)
   })
+})
+
+export function setupMetadata (window: BrowserWindow): void {
+  currentWindow = window
+}
+
+export function sendEvent (event: MediaEvent, to = 0): void {
+  currentWindow?.webContents?.send('media-event', event, to)
 }
 
 let lastSongId = -1

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   Box,
   Button,
@@ -8,11 +8,13 @@ import {
   makeStyles,
   Typography
 } from '@material-ui/core'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import { TreeItem, TreeView } from '@material-ui/lab'
-import { rescan } from '../../library/libraryScanner'
-import { Album, getDatabase } from '../../library/DatabaseWrapper'
+import { useAppDispatch, useAppSelector } from '../../store'
+import { getAlbumIds, getAlbumsForDisplay, getScanStatus } from '../../store/selectors'
+import { loadAlbums, rescanLibrary } from '../../store/library'
+import { AlbumList } from './AlbumList'
 
 const useStyles = makeStyles((theme) => createStyles({
   root: {
@@ -55,52 +57,31 @@ function CircularProgressWithLabel(props: CircularProgressProps & { value: numbe
 
 export const MediaLibrary: React.FC = () => {
   const classes = useStyles()
-  const [albums, setAlbums] = useState<Array<Album>>([])
-  const [totalLoading, setTotalLoading] = useState(1)
-  const [totalLoaded, setTotalLoaded] = useState(0)
-  const [isLoading, setLoading] = useState(false)
+  const dispatch = useAppDispatch()
+  const albumIds = useAppSelector(getAlbumIds)
+  const { totalSongs, scanned, syncing } = useAppSelector(getScanStatus)
   useEffect(() => {
-    getDatabase().then(db => db.getAlbums()).then(albums => setAlbums(albums))
+    dispatch(loadAlbums())
   }, [])
-  const callback = (loaded: number, total: number) => {
-    setTotalLoading(total)
-    setTotalLoaded(loaded)
-  }
   const refreshLibrary = async () => {
-    setLoading(true)
-    await rescan(callback)
-    const db = await getDatabase()
-    setAlbums(await db.getAlbums())
-    setLoading(false)
+    await dispatch(rescanLibrary(false))
   }
-  const percentLoaded = Math.round((totalLoaded / totalLoading) * 100)
+  const percentLoaded = totalSongs === 0 ? 0 : Math.round((scanned / totalSongs) * 100)
   return (
     <div className={classes.root}>
       <div style={{ display: 'flex' }}>
-        <Typography>{`All music (${albums.length})`}</Typography>
-        <Button onClick={refreshLibrary} disabled={isLoading} variant="contained" style={{ marginLeft: 'auto' }}>
+        <Typography>{`All music (${albumIds.length})`}</Typography>
+        <Button onClick={refreshLibrary} disabled={syncing} variant="contained" style={{ marginLeft: 'auto' }}>
           Refresh
         </Button>
       </div>
-      {isLoading && <div style={{ display: 'flex', flexDirection: 'column', padding: '1rem', alignItems: 'center' }}>
+      {syncing && <div style={{ display: 'flex', flexDirection: 'column', padding: '1rem', alignItems: 'center' }}>
         <CircularProgressWithLabel value={percentLoaded} />
         <Typography>
-          Loading: {totalLoaded} of {totalLoading}
+          Loading: {scanned} of {totalSongs}
         </Typography>
       </div>}
-      {!isLoading && <TreeView
-        defaultCollapseIcon={<ExpandMoreIcon/>}
-        defaultExpandIcon={<ChevronRightIcon/>}
-      >
-        {albums.map((album, albumIndex) => (
-          <TreeItem
-            className={classes.small}
-            key={albumIndex}
-            nodeId={`A${albumIndex}`}
-            label={`${album.artist} - [${album.date}] ${album.album} (${album.songs})`}
-          />
-        ))}
-      </TreeView>}
+      {!syncing && <AlbumList albumIds={albumIds}/>}
     </div>
   )
 }

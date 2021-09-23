@@ -56,6 +56,11 @@
                   "html": "./src/index.html",
                   "js": "./src/renderer/index.ts",
                   "name": "main_window"
+                },
+                {
+                  "html": "./src/index.html",
+                  "js": "./src/renderer/config/index.ts",
+                  "name": "config_window"
                 }
               ]
             }
@@ -96,20 +101,27 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@reduxjs/toolkit": "^1.6.0",
+    "@types/he": "^1.1.2",
     "@types/node": "^16.6.1",
     "@types/node-fetch": "^2.5.12",
+    "@types/redux-logger": "^3.0.9",
+    "clsx": "^1.1.1",
     "date-fns": "^2.22.1",
     "electron-media-service": "file:/Users/diana.horbatiuk/Projetos/electron-media-service",
     "electron-squirrel-startup": "^1.0.0",
     "fast-xml-parser": "^3.19.0",
     "he": "^1.2.0",
+    "idb": "^6.1.4",
     "node-fetch": "^2.6.1",
     "node-ssdp": "^4.0.1",
     "re-reselect": "^4.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.4",
+    "react-virtualized": "^9.22.3",
+    "react-virtualized-tree": "^3.4.1",
     "redux": "^4.1.0",
+    "redux-logger": "^3.0.6",
     "reselect": "^4.0.0",
     "temp-dir": "^2.0.0",
     "upnp-device-client": "^1.0.2"

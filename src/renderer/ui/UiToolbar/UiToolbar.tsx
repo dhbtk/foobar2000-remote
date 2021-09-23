@@ -38,7 +38,7 @@ export default function UiToolbar (): React.ReactElement {
         <PromiseButton onClick={api.play}>
           <PlayArrowIcon/>
         </PromiseButton>
-        <PromiseButton onClick={api.pause}>
+        <PromiseButton onClick={api.playPause}>
           <PauseIcon/>
         </PromiseButton>
         <PromiseButton onClick={api.previous}>

@@ -46,4 +46,6 @@ export interface PlayerState {
   player: Player
   playlists: PlaylistInfo[]
   playlistItems: Record<string, PlaylistItemList>
+  timestamp: number
+  loaded: boolean
 }

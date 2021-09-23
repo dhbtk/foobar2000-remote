@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react'
 import { useAppSelector } from '../../store'
-import { getMediaImage, getMetadata, getNativeMetadata, getPlayerState } from '../../store/selectors'
+import { getMediaImage, getMetadata } from '../../store/selectors'
 import { shallowEqual } from 'react-redux'
 import { createStyles, makeStyles, Typography } from '@material-ui/core'
-import { setupRenderer, updateMetadata } from '../../stream/metadataClient'
-import { ms } from '../utils'
 import { FileColumns } from '../../api/api'
 
 const metadataInfo = (i: FileColumns): Array<[string, string]> => {
@@ -117,13 +115,6 @@ const useStyles = makeStyles((theme) => createStyles({
 const MediaSessionState: React.FC = () => {
   const classes = useStyles()
   const metadata = useAppSelector(getMetadata, shallowEqual)
-  const nativeMetadata = useAppSelector(getNativeMetadata, shallowEqual)
-  useEffect(() => {
-    setupRenderer()
-  }, [])
-  useEffect(() => {
-    updateMetadata(nativeMetadata)
-  }, [nativeMetadata])
   useEffect(() => {
     if (metadata === null) {
       window.document.title = 'foobar2000 remote'

@@ -2,6 +2,7 @@ import { IpcRenderer } from 'electron'
 import { Messages } from '../../shared/upnp/types'
 import { Result } from '../../main/upnp/service'
 import { parse } from 'fast-xml-parser'
+import he, { DecodeOptions } from 'he'
 
 let ipcRenderer: IpcRenderer
 
@@ -25,6 +26,16 @@ export type BrowseItem = {
   trackNumber: string | undefined
 }
 
+function safeDecode (input: string | number | null | undefined, options?: DecodeOptions): string {
+  if (input === null || input === undefined) {
+    return ''
+  }
+  if (typeof input === 'number') {
+    return input.toString(10)
+  }
+  return he.decode(input, options)
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function itemItems (container: any): Array<BrowseItem> {
   if (!container) {
@@ -35,16 +46,16 @@ function itemItems (container: any): Array<BrowseItem> {
   return wrapped.map(item => {
     return {
       id: item.attr['@_id'],
-      title: item['dc:title'],
-      creator: item['dc:creator'],
-      date: item['dc:date'],
-      artist: Array.isArray(item['upnp:artist']) ? item['upnp:artist'][0] : item['upnp:artist'],
-      album: item['upnp:album'],
+      title: safeDecode(item['dc:title']),
+      creator: safeDecode(item['dc:creator']),
+      date: safeDecode(item['dc:date']),
+      artist: safeDecode((Array.isArray(item['upnp:artist']) ? item['upnp:artist'][0] : item['upnp:artist'])),
+      album: safeDecode(item['upnp:album']),
       // @ts-expect-error asdf
-      durations: item.res.map(r => r.attr['@_duration']),
+      durations: item.res.map(r => safeDecode(r.attr['@_duration'], { isAttributeValue: true })),
       // @ts-expect-error asdf
       sizes: item.res.map(r => parseInt(r.attr['@_size'], 10)),
-      trackNumber: item['upnp:originalTrackNumber']
+      trackNumber: safeDecode(item['upnp:originalTrackNumber'])
     }
   })
 }

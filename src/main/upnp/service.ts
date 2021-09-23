@@ -11,7 +11,7 @@ export interface Result<T = unknown> {
 
 const promise = (resolve: (r: Result) => void): Callback => (error, result) => resolve({ error, result })
 
-export function setup (ipcMain: IpcMain): void {
+export function upnpSetup (ipcMain: IpcMain): void {
   ipcMain.handle(Messages.NewClient, (event, url) => {
     client = new Client(url)
   })

@@ -2,6 +2,8 @@ import { RootState } from './index'
 import { ActiveItem, PlaybackState, Player, PlaylistInfo } from '../../shared/types'
 import { createSelector } from 'reselect'
 import { apiUrl, columnInfo } from '../api/api'
+import { Album, Song } from './library/types'
+import createCachedSelector from 're-reselect'
 
 export const getPlaybackState = (state: RootState): PlaybackState => state.player.player.playbackState
 export const getPlayerState = (state: RootState): Player => state.player.player
@@ -88,3 +90,40 @@ export const getSelectedPlaylistIndex = (state: RootState): number => {
 
 export const getPlaylist: (i: number) => (s: RootState) => PlaylistInfo = (index) => (state) => state.player.playlists[index]
 export const getActiveItem = (state: RootState): ActiveItem => state.player.player.activeItem
+
+export const getScanStatus = (s: RootState): { syncing: boolean, scanned: number, totalSongs: number } => {
+  const { syncing, scanned, totalSongs } = s.library
+  return { syncing, scanned, totalSongs }
+}
+
+export type AlbumWithSongs = Album & { songs: Song[] }
+export const getAlbumsForDisplay = createSelector(
+  [
+    (s: RootState) => s.library.albumIds,
+    s => s.library.albums,
+    s => s.library.songIds,
+    s => s.library.songs
+  ],
+  (albumIds, albums, songIds, allSongs): AlbumWithSongs[] => {
+    return albumIds.map(id => {
+      const album = albums[id]
+      const songs = album.songIds.map(id => allSongs[id]).filter(Boolean)
+      songs.sort((a, b) => parseInt(a.trackNumber, 10) - parseInt(b.trackNumber, 10))
+      return {...album, songs }
+    })
+  }
+)
+
+export const getAlbumForDisplay = createCachedSelector(
+  [
+    (state: RootState, albumId: number) => state.library.albums[albumId],
+    s => s.library.songs
+],
+  (album, allSongs): AlbumWithSongs => {
+    const songs = album.songIds.map(id => allSongs[id]).filter(Boolean)
+    songs.sort((a, b) => parseInt(a.trackNumber, 10) - parseInt(b.trackNumber, 10))
+    return {...album, songs }
+  }
+)((state, albumId) => albumId)
+
+export const getAlbumIds = (s: RootState): number[] => s.library.albumIds

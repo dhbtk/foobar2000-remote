@@ -4,12 +4,11 @@ import UiToolbar from './UiToolbar/UiToolbar'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import store from '../store'
-import { loadPlayerState } from '../store/player'
 import MediaSessionState from './MediaSessionState/MediaSessionState'
-import StreamPlayer from './MediaSessionState/StreamPlayer'
 import PlaylistView from './PlaylistView/PlaylistView'
 import { MediaLibrary } from './MediaLibrary/MediaLibrary'
 import StatusBar from './StatusBar/StatusBar'
+import PlayerState from './state/PlayerState'
 
 export const themeColors = {
   primary: '#8c82fc',
@@ -49,7 +48,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
-      <StreamPlayer/>
+      <PlayerState/>
       <UiToolbar/>
       <div style={{ flex: '1', display: 'flex', height: '0' }}>
         <MediaLibrary/>
@@ -65,15 +64,7 @@ const App: React.FC = () => {
 
 export default App
 
-function startUpdating (): void {
-  const callback = () => {
-    setTimeout(() => startUpdating(), 1000)
-  }
-  store.dispatch(loadPlayerState()).then(callback).catch(callback)
-}
-
 export const start = (): void => {
-  startUpdating()
   ReactDOM.render(
     <React.StrictMode>
       <Provider store={store}>

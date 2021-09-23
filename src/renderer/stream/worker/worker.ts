@@ -89,7 +89,7 @@ function startListening () {
 }
 
 function stopListening () {
-  abortController.abort()
+  abortController?.abort()
 }
 
 self.onmessage = ({ data }: MessageEvent<string>) => {
