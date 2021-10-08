@@ -42,7 +42,7 @@ export default function PlaylistView (): React.ReactElement {
         </Tabs>
       </AppBar>
       <div className={classes.playlistContainer}>
-        {playlists.map((_, i) => <Playlist activeIndex={tabIndex} index={i} key={i}/>)}
+        {playlists.map((info, i) => <Playlist info={info} activeIndex={tabIndex} index={i} key={i}/>)}
       </div>
     </React.Fragment>
   )

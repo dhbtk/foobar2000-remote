@@ -15,8 +15,17 @@ async function scanAllFiles (rootId: string, progressCb: (progress: number, tota
   const allContents = await upnpClient.browse(rootId)
   const songCount = allContents.container.length
   let loggedSongs = 0
-
+  const validPaths: typeof allContents.container = []
   for (const container of allContents.container) {
+    if (await songExists(container.title)) {
+      loggedSongs++
+    } else {
+      validPaths.push(container)
+    }
+  }
+  progressCb(loggedSongs, songCount)
+
+  for (const container of validPaths) {
     const { id, title: path } = container
     const exists = await songExists(path)
     if (reset || !exists) {

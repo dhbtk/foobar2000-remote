@@ -11,7 +11,7 @@ import library from './library'
 const rootReducer = combineReducers({ player, local, [api.reducerPath]: api.reducer, library })
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware)
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat(api.middleware)
 })
 
 setupListeners(store.dispatch)

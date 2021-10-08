@@ -1,30 +1,36 @@
-import React, { useEffect } from 'react'
+import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import {
+  AppBar,
   Box,
   Button,
   CircularProgress,
   CircularProgressProps,
   createStyles,
-  makeStyles,
+  makeStyles, Toolbar,
   Typography
 } from '@material-ui/core'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-import { TreeItem, TreeView } from '@material-ui/lab'
 import { useAppDispatch, useAppSelector } from '../../store'
-import { getAlbumIds, getAlbumsForDisplay, getScanStatus } from '../../store/selectors'
+import { getAlbumIds, getScanStatus } from '../../store/selectors'
 import { loadAlbums, rescanLibrary } from '../../store/library'
 import { AlbumList } from './AlbumList'
 
 const useStyles = makeStyles((theme) => createStyles({
   root: {
-    width: 400,
     resize: 'horizontal',
-    padding: theme.spacing(1),
-    borderRight: '1px solid #ccc',
+    padding: 0,
     flex: '0 0 auto',
     height: '100%',
-    overflow: 'auto'
+    position: 'relative',
+  },
+  resizeHandle: {
+    position: 'absolute',
+    content: '" "',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    width: 2,
+    backgroundColor: theme.palette.divider,
+    cursor: 'ew-resize'
   },
   small: {
     '& .MuiTreeItem-label': {
@@ -67,21 +73,59 @@ export const MediaLibrary: React.FC = () => {
     await dispatch(rescanLibrary(false))
   }
   const percentLoaded = totalSongs === 0 ? 0 : Math.round((scanned / totalSongs) * 100)
+  const containerRef = useRef<HTMLDivElement>()
+  const [height, setHeight] = useState(0)
+  useEffect(() => {
+    const handler = () => {
+      setHeight(containerRef.current.clientHeight - 48)
+    }
+    window.addEventListener('resize', handler)
+    handler()
+    return () => {
+      window.removeEventListener('resize', handler)
+    }
+  }, [])
+
+  const [width, setWidth] = useState(400)
+  const widthRef = useRef(width)
+  widthRef.current = width
+
+  const startResize = useCallback<MouseEventHandler<HTMLDivElement>>((startEv) => {
+    let x: number, dx: number
+    x = startEv.screenX
+    const moveHandler = (e: MouseEvent) => {
+      dx = e.screenX - x
+      x = e.screenX
+      widthRef.current += dx
+      setWidth(widthRef.current)
+    }
+    const stopDrag = () => {
+      document.body.removeEventListener('mousemove', moveHandler)
+      document.body.removeEventListener('mouseup', stopDrag)
+    }
+    document.body.addEventListener('mousemove', moveHandler)
+    document.body.addEventListener('mouseup', stopDrag)
+  }, [setWidth])
   return (
-    <div className={classes.root}>
-      <div style={{ display: 'flex' }}>
-        <Typography>{`All music (${albumIds.length})`}</Typography>
-        <Button onClick={refreshLibrary} disabled={syncing} variant="contained" style={{ marginLeft: 'auto' }}>
-          Refresh
-        </Button>
-      </div>
+    <div className={classes.root} ref={containerRef} style={{ width }}>
+      <AppBar position="static">
+        <Toolbar variant="dense">
+          <Typography>
+            {`All music (${albumIds.length})`}
+          </Typography>
+          <Button onClick={refreshLibrary} disabled={syncing} variant="contained" style={{ marginLeft: 'auto' }}>
+            Refresh
+          </Button>
+        </Toolbar>
+      </AppBar>
       {syncing && <div style={{ display: 'flex', flexDirection: 'column', padding: '1rem', alignItems: 'center' }}>
         <CircularProgressWithLabel value={percentLoaded} />
         <Typography>
           Loading: {scanned} of {totalSongs}
         </Typography>
       </div>}
-      {!syncing && <AlbumList albumIds={albumIds}/>}
+      {!syncing && <AlbumList height={height} width={width - 2} />}
+      <div className={classes.resizeHandle} onMouseDown={startResize} />
     </div>
   )
 }

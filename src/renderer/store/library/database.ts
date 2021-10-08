@@ -1,6 +1,7 @@
 import { DBSchema, IDBPDatabase, openDB } from 'idb'
 import { BrowseItem } from '../../upnp/client'
 import { Album, Song } from './types'
+import he from 'he'
 
 const DB = 'songDB'
 
@@ -24,7 +25,7 @@ interface SongDB extends DBSchema {
 }
 
 export async function getDB (): Promise<IDBPDatabase<SongDB>> {
-  return await openDB<SongDB>(DB, 5, {
+  return await openDB<SongDB>(DB, 6, {
     upgrade: async (db, oldVersion, _newVersion, tx) => {
       if (oldVersion < 1) {
         const songStore = db.createObjectStore('songs', {
@@ -63,6 +64,12 @@ export async function getDB (): Promise<IDBPDatabase<SongDB>> {
         tx.objectStore('songs').createIndex('by-trackNumber', 'trackNumber', {
           unique: false
         })
+      }
+      if (oldVersion < 6) {
+        const allSongs = await tx.objectStore('songs').getAll()
+        for (const song of allSongs) {
+          tx.objectStore('songs').put({...song, path: he.decode(song.path) })
+        }
       }
     }
   })

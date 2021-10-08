@@ -90,13 +90,13 @@ function containerItems (container: any): Array<{
     return container.map(item => {
       return {
         id: item.attr['@_id'],
-        title: item['dc:title']
+        title: he.decode(item['dc:title'])
       }
     })
   } else {
     return [{
       id: container.attr['@_id'],
-      title: container['dc:title']
+      title: he.decode(container['dc:title'])
     }]
   }
 }

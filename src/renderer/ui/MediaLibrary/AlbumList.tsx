@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { AlbumWithSongs, getAlbumForDisplay, getAlbumsForDisplay } from '../../store/selectors'
-import { createStyles, makeStyles, Typography } from '@material-ui/core'
-import clsx from 'clsx'
+import React, { CSSProperties } from 'react'
+import { getAlbumForDisplay, getMediaLibraryList, getMediaLibraryRow, LibraryRow } from '../../store/selectors'
+import { createStyles, makeStyles } from '@material-ui/core'
 import { useAppDispatch, useAppSelector } from '../../store'
 import { toggleAlbumOpen } from '../../store/library'
-import Tree, { renderers, Node } from 'react-virtualized-tree'
-
-const { Expandable } = renderers
+import { FixedSizeList } from 'react-window'
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import api from '../../api/api'
 
 const useStyles = makeStyles((theme) => createStyles({
   list: {
@@ -25,76 +25,77 @@ const useStyles = makeStyles((theme) => createStyles({
     height: 0
   },
   toggle: {
-    marginLeft: 3,
-    marginTop: 3,
-    marginRight: 9,
-    height: 12,
+    marginLeft: 0,
+    marginTop: 0,
+    marginRight: 6,
+    height: 18,
     width: 12,
-    backgroundColor: '#900'
+    minWidth: 12,
+    fontSize: 18
   },
   childIndicator: {
-    marginLeft: 3,
-    marginTop: 3,
-    marginRight: 9,
+    marginLeft: 0,
+    marginTop: 0,
+    marginRight: 12,
     height: 12,
-    width: 24,
-    backgroundColor: '#900'
+    width: 12,
+    minWidth: 12,
+    fontSize: 12
+  },
+  text: {
+    ...theme.typography.body1,
+    fontSize: 12,
+    flex: '1',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    cursor: 'default',
+    userSelect: 'none'
   }
 }))
 
-const AlbumRow: React.FC<{ albumId: number, visible: boolean }> = React.memo(({ albumId, visible }) => {
+const AlbumRow: React.FC<{ index: number, data: LibraryRow, style: CSSProperties }> = ({ index, style }) => {
   const dispatch = useAppDispatch()
-  const album = useAppSelector(state => getAlbumForDisplay(state, albumId))
+  const item: LibraryRow = useAppSelector(state => getMediaLibraryRow(state, index))
+  const displayItem = useAppSelector(state => getAlbumForDisplay(state, ('albumId' in item) ? item.albumId : item.id))
+  const defaultPlaylistId = useAppSelector(state => state.player.playlists[0]?.id ?? '')
+  const sendToDefault = () => {
+    console.log('kaboom!!!!', defaultPlaylistId)
+    if (defaultPlaylistId !== '') {
+      console.log('happening<SSS')
+      api.replaceEntries(defaultPlaylistId, displayItem.songs.map(s => s.path))
+    }
+  }
   const classes = useStyles()
-  const hidden = !visible
-  return (
-    <React.Fragment key={album.id}>
-      <div className={classes.slot}>
-        <div className={classes.toggle} onClick={() => dispatch(toggleAlbumOpen(album.id))}/>
-        <Typography component="span" style={{ fontSize: 12 }}>
-          {album.artist} - [{album.date}] {album.album} ({album.songIds.length})
-        </Typography>
+  if ('albumId' in item) {
+    return (
+      <div style={style} className={classes.slot}>
+        <div className={classes.childIndicator}/>
+        <span className={classes.text} title={`${item.trackNumber}. ${item.title}`}>
+          {item.trackNumber}. {item.title}
+        </span>
       </div>
-      {album.songs.map(song => (
-        <div className={clsx(classes.slot, hidden && classes.hidden)} key={song.id}>
-          <div className={classes.childIndicator}/>
-          <Typography component="span" style={{ fontSize: 12 }}>
-            {song.trackNumber}. {song.title}
-          </Typography>
+    )
+  } else {
+    return (
+      <div style={style} className={classes.slot} onDoubleClick={sendToDefault}>
+        <div className={classes.toggle} onClick={() => dispatch(toggleAlbumOpen(item.id))}>
+          {item.visible ? <KeyboardArrowDownIcon fontSize="inherit"/> : <KeyboardArrowRightIcon fontSize="inherit"/>}
         </div>
-      ))}
-    </React.Fragment>
-  )
-})
+        <span className={classes.text} title={`${item.artist} - [${item.date}] ${item.album} (${item.songIds.length})`}>
+          {item.artist} - [{item.date}] {item.album} ({item.songIds.length})
+        </span>
+      </div>
+    )
+  }
+}
 
-export const AlbumList: React.FC<{ albumIds: number[] }> = ({ albumIds }) => {
-  const classes = useStyles()
-  const albums = useAppSelector(getAlbumsForDisplay)
-  const [albumNodes, setAlbumNodes] = useState<Node[]>([])
-  useEffect(() => {
-    setAlbumNodes(albums.map((album, albumIndex) => {
-      return {
-        id: `A${albumIndex}`,
-        name: `${album.artist} - [${album.date}] ${album.album} (${album.songs.length})`,
-        children: album.songs.map(song => ({
-          id: `A${albumIndex}-${song.id}`,
-          name: `${song.trackNumber}. ${song.title}`
-        }))
-      }
-    }))
-  }, [albums])
+export const AlbumList: React.FC<{ width: number, height: number }> = ({ width, height }) => {
+  const albums = useAppSelector(getMediaLibraryList)
 
   return (
-    <Tree nodes={albumNodes} onChange={setAlbumNodes}>
-      {({ style, node, ...rest }) => {
-        return (
-          <div style={style}>
-            <Expandable node={node} {...rest}>
-              <Typography>{node.name}</Typography>
-            </Expandable>
-          </div>
-        )
-      }}
-    </Tree>
+    <FixedSizeList itemSize={18} height={height} itemCount={albums.length} width={width} overscanCount={30}>
+      {AlbumRow}
+    </FixedSizeList>
   )
 }

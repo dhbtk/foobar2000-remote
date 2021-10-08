@@ -1,5 +1,7 @@
 import { SoundBuffer } from './SoundBuffer'
+import { IpcRenderer } from 'electron'
 
+const ipcRenderer: IpcRenderer = window.require('electron').ipcRenderer
 const context = new AudioContext()
 const gain = context.createGain()
 let lastVolume = 0.05
@@ -18,7 +20,7 @@ function playChunk (leftBuffer: Float32Array, rightBuffer: Float32Array) {
 }
 
 function applyVolume () {
-  gain.gain.value = (Math.exp(lastVolume) - 1) / (Math.E - 1)
+  ipcRenderer.invoke('stream-set-volume', (Math.exp(lastVolume) - 1) / (Math.E - 1))
 }
 
 export function setGain (value: number): void {
@@ -28,10 +30,12 @@ export function setGain (value: number): void {
 
 export function startListening (): void {
   applyVolume()
-  worker.postMessage('start')
+  ipcRenderer.invoke('stream-start')
+  // worker.postMessage('start')
 }
 
 export function stopListening (): void {
   gain.gain.value = 0
-  worker.postMessage('stop')
+  ipcRenderer.invoke('stream-stop')
+  // worker.postMessage('stop')
 }

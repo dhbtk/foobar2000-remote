@@ -44,7 +44,7 @@ ipcMain.on('media-metadata', (_, metadata: Metadata) => {
         body.on('end', () => {
           lastArtPath = fileName
           metadata.artPath = lastArtPath
-          console.log('sending metadata to native service')
+          console.log('sending metadata to native service: ' + JSON.stringify(metadata))
           mediaService.setMetaData(metadata)
         })
         body.pipe(destStream)
@@ -62,7 +62,6 @@ ipcMain.on('media-metadata', (_, metadata: Metadata) => {
     })
   } else {
     metadata.artPath = lastArtPath
-    console.log('sending metadata as-is: ' + JSON.stringify(metadata))
     mediaService.setMetaData(metadata)
   }
 })

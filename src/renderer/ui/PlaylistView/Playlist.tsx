@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core'
 import { useAppSelector } from '../../store'
 import { getActiveItem, getPlaylist } from '../../store/selectors'
 import { useGetPlaylistItemsQuery } from '../../store/api'
-import { PlaylistItemList } from '../../../shared/types'
+import { PlaylistInfo, PlaylistItemList } from '../../../shared/types'
 import api, { columnInfo } from '../../api/api'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 
@@ -105,16 +105,15 @@ const transform = (index: number, activeIndex: number) => {
   }
 }
 
-export const Playlist: React.FC<{ index: number, activeIndex: number }> = ({ index, activeIndex }) => {
+export const Playlist: React.FC<{ index: number, activeIndex: number, info: PlaylistInfo }> = ({ index, activeIndex, info }) => {
   const classes = useStyles()
-  const playlist = useAppSelector(getPlaylist(index))
-  const { data: playlistItems } = useGetPlaylistItemsQuery({ id: playlist?.id, range: `0:${playlist?.itemCount}`})
+  const { data: playlistItems } = useGetPlaylistItemsQuery({ id: info.id, range: `0:${info.itemCount}`})
   const style = {
     transform: transform(index, activeIndex)
   }
   return (
     <div className={classes.root} style={style}>
-      {playlistItems ? <PlaylistItems playlistId={playlist.id} playlistItems={playlistItems}/> : 'Loading...'}
+      {playlistItems ? <PlaylistItems playlistId={info.id} playlistItems={playlistItems}/> : 'Loading...'}
     </div>
   )
 }

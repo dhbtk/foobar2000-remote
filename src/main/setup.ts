@@ -2,6 +2,7 @@ import { ssdpSetup } from './ssdp'
 import { upnpSetup } from './upnp/service'
 import { app, BrowserWindow, ipcMain, Menu, MenuItemConstructorOptions, shell } from 'electron'
 import { setupMetadata } from './metadata/service'
+import { playerSetup } from './player/player'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const CONFIG_WINDOW_WEBPACK_ENTRY: string
@@ -26,6 +27,7 @@ export function configureApp (): void {
 export function setupModules (): void {
   ssdpSetup()
   upnpSetup(ipcMain)
+  playerSetup()
 }
 
 export function createWindow (): void {

@@ -1,4 +1,6 @@
 import { QueryResponse } from '../../shared/types'
+import store from '../store'
+import { api } from '../store/api'
 
 export const streamUrl = 'http://foo:bar@192.168.18.3:56923/content/psc.mp3'
 export const apiUrl = 'http://desktop-ikn2fef.local:8880/api'
@@ -82,7 +84,7 @@ export type Entries = {
   entries: Array<Entry>
 }
 
-export default {
+const us = {
   updateState: async (): Promise<QueryResponse> => {
     const params = new URLSearchParams({
       player: 'true',
@@ -126,5 +128,25 @@ export default {
   browseEntries: async (path: string): Promise<Entries> => {
     const params = new URLSearchParams({ path })
     return await fetch(`${apiUrl}/browser/entries?${params}`).then(r => r.json())
+  },
+  replaceEntries: async (playlistId: string, items: string[]): Promise<void> => {
+    await fetch(`${apiUrl}/playlists/${playlistId}/clear`, { method: 'POST' })
+    await fetch(`${apiUrl}/playlists/${playlistId}/items/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        index: 0,
+        async: false,
+        replace: true,
+        play: true,
+        items
+      })
+    })
+    store.dispatch(api.util.invalidateTags([{ type: 'Playlist', id: playlistId }]))
+    await us.playItem(playlistId, 0)
   }
 }
+
+export default us

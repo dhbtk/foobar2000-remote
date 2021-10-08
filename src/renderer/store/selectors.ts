@@ -10,10 +10,11 @@ export const getPlayerState = (state: RootState): Player => state.player.player
 export const getMediaImage = createSelector(
   [
     getPlaybackState,
-    (state: RootState) => `${state.player.player.activeItem.playlistId}/${state.player.player.activeItem.index}`
+    (state: RootState) => `${state.player.player.activeItem.playlistId}/${state.player.player.activeItem.index}`,
+    state => state.player.player.activeItem.index
   ],
-  (playbackState, path) => {
-    if (playbackState === 'stopped') {
+  (playbackState, path, index) => {
+    if (playbackState === 'stopped' || index === -1) {
       return ''
     } else {
       return `${apiUrl}/artwork/${path}`
@@ -65,9 +66,10 @@ export const getNativeMetadata = createSelector(
     getMediaImage,
     getSongId,
     (state) => state.player.player.activeItem.position * 1000,
-    (state) => state.player.player.activeItem.duration * 1000
+    (state) => state.player.player.activeItem.duration * 1000,
+    (state) => state.player.timestamp
   ],
-  (playbackState, title, artist, album, src, songId, position, duration) => {
+  (playbackState, title, artist, album, src, songId, position, duration, timestamp) => {
     return {
       title: title || '',
       artist: artist || '',
@@ -76,7 +78,8 @@ export const getNativeMetadata = createSelector(
       state: playbackState,
       id: songId,
       currentTime: position,
-      duration
+      duration,
+      timestamp
     }
   }
 )
@@ -97,6 +100,10 @@ export const getScanStatus = (s: RootState): { syncing: boolean, scanned: number
 }
 
 export type AlbumWithSongs = Album & { songs: Song[] }
+export type SongWithAlbum = Song & { albumId: number }
+export type AlbumWithVisibility = Album & { visible: boolean }
+export type LibraryRow = AlbumWithVisibility | SongWithAlbum
+
 export const getAlbumsForDisplay = createSelector(
   [
     (s: RootState) => s.library.albumIds,
@@ -113,6 +120,34 @@ export const getAlbumsForDisplay = createSelector(
     })
   }
 )
+
+export const getMediaLibraryList = createSelector(
+  [
+    (s: RootState) => s.library.expandedAlbums,
+    getAlbumsForDisplay
+  ],
+  (expandedAlbumIds, albums): LibraryRow[] => {
+    const rows: LibraryRow[] = []
+    for (const album of albums) {
+      const visible = expandedAlbumIds.includes(album.id)
+      rows.push({ ...album, visible })
+      if (visible) {
+        for (const song of album.songs) {
+          rows.push({ ...song, albumId: album.id, visible })
+        }
+      }
+    }
+    return rows
+  }
+)
+
+export const getMediaLibraryRow = createCachedSelector(
+  [
+    (state: RootState, index: number) => index,
+    getMediaLibraryList
+  ],
+  (rowIndex, rows): LibraryRow => rows[rowIndex]
+)((state, index) => index)
 
 export const getAlbumForDisplay = createCachedSelector(
   [

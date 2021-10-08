@@ -16,10 +16,10 @@ function int16ToFloat32(inputArray: Int16Array, startIndex: number, length: numb
 }
 
 function parseHeader (chunk: Buffer) {
-  const riff = chunk.toString('ascii', 0, 3)
+  const riff = chunk.toString('ascii', 0, 4)
   const size = chunk.readInt32LE(4)
-  const wave = chunk.toString('ascii', 8, 11)
-  const fmt = chunk.toString('ascii', 12, 15)
+  const wave = chunk.toString('ascii', 8, 12)
+  const fmt = chunk.toString('ascii', 12, 16)
   const len = chunk.readInt32LE(16)
   const type = chunk.readInt16LE(20)
   const channels = chunk.readInt16LE(22)
@@ -27,7 +27,7 @@ function parseHeader (chunk: Buffer) {
   const bitRate = chunk.readInt32LE(28)
   const blockAlign = chunk.readInt16LE(32)
   const bitsPerSample = chunk.readInt16LE(34)
-  const data = chunk.toString('ascii', 36, 39)
+  const data = chunk.toString('ascii', 36, 40)
 
   console.table({ riff, size, wave, fmt, len, type, channels, sampleRate, bitRate, blockAlign, bitsPerSample, data })
 }
